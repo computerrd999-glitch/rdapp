@@ -1,0 +1,3723 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <!-- PWA & Mobile Viewport Configuration -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Student Management - Mobile App & Digital Notebook</title>
+
+  <!-- PWA Web App Manifest & App Icons -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="theme-color" content="#0a0e17">
+  
+  <!-- iOS Safari & Android Standalone Web App Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Student Management">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Student Management">
+  
+  <style>
+    /* ========================================================
+       STUDENT MANAGEMENT & PERSONAL WORK TRACKING APP
+       Progressive Web App (PWA) & Native Mobile App Styles
+       Modern Glassmorphism Design System
+       ======================================================== */
+
+    :root {
+      /* Dark Theme (Default) */
+      --bg-base: #0a0e17;
+      --bg-gradient: radial-gradient(circle at 15% 15%, #141e33 0%, #0a0e17 100%);
+      --bg-surface: rgba(18, 26, 44, 0.82);
+      --bg-surface-card: rgba(26, 38, 64, 0.72);
+      --bg-input: rgba(13, 20, 36, 0.92);
+      --border-color: rgba(255, 255, 255, 0.10);
+      --border-focus: #3b82f6;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-glow: rgba(59, 130, 246, 0.4);
+
+      --color-emerald: #10b981;
+      --color-emerald-bg: rgba(16, 185, 129, 0.16);
+      --color-rose: #f43f5e;
+      --color-rose-bg: rgba(244, 63, 94, 0.16);
+      --color-amber: #f59e0b;
+      --color-amber-bg: rgba(245, 158, 11, 0.16);
+      --color-violet: #8b5cf6;
+      --color-violet-bg: rgba(139, 92, 246, 0.16);
+
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.22);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.38);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.52);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+      --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f1f5f9;
+      --bg-gradient: radial-gradient(circle at 15% 15%, #ffffff 0%, #f1f5f9 100%);
+      --bg-surface: rgba(255, 255, 255, 0.90);
+      --bg-surface-card: rgba(255, 255, 255, 0.96);
+      --bg-input: #ffffff;
+      --border-color: rgba(0, 0, 0, 0.10);
+      --border-focus: #2563eb;
+
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
+    }
+
+    /* CSS Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background: var(--bg-base);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.5;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+      touch-action: manipulation;
+      overscroll-behavior-y: contain;
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* Ambient Background Canvas */
+    #ambient-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+    }
+
+    /* ========================================================
+       PWA APP SPLASH / LOADING SCREEN
+       ======================================================== */
+    #app-splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0a0e17;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .splash-logo-wrap {
+      width: 90px;
+      height: 90px;
+      border-radius: 22px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 32px var(--primary-glow);
+      animation: pulse-splash 1.8s infinite ease-in-out;
+      overflow: hidden;
+    }
+
+    .splash-logo-img {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+    }
+
+    @keyframes pulse-splash {
+      0%, 100% { transform: scale(0.96); box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+      50% { transform: scale(1.04); box-shadow: 0 0 36px rgba(59, 130, 246, 0.6); }
+    }
+
+    .splash-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .splash-loader-bar {
+      width: 140px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .splash-loader-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 45%;
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      border-radius: var(--radius-full);
+      animation: splashSlide 1.2s infinite ease-in-out;
+    }
+
+    @keyframes splashSlide {
+      0% { left: -45%; }
+      100% { left: 100%; }
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      border-radius: var(--radius-lg);
+    }
+
+    .glass-card {
+      background: var(--bg-surface-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    /* Typography & Utilities */
+    .gradient-text {
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-emerald { color: var(--color-emerald) !important; }
+    .text-rose { color: var(--color-rose) !important; }
+    .text-amber { color: var(--color-amber) !important; }
+    .text-violet { color: var(--color-violet) !important; }
+    .text-primary { color: var(--primary) !important; }
+    .text-muted { color: var(--text-muted) !important; }
+
+    /* ========================================================
+       1. LOGIN VIEW
+       ======================================================== */
+    #view-login {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .login-card {
+      padding: 2.25rem 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .brand-icon-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid var(--border-color);
+      font-size: 2rem;
+      margin-bottom: 0.85rem;
+      box-shadow: 0 0 24px var(--primary-glow);
+      overflow: hidden;
+    }
+
+    .brand-icon-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    .brand-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: var(--color-rose-bg);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      color: #fb7185;
+      animation: shake 0.35s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    /* Form Styles */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      font-size: 1rem;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .input-wrap input {
+      padding-left: 2.75rem !important;
+    }
+
+    /* 16px minimum font size avoids auto-zoom on mobile iOS/Android */
+    input[type="text"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 0.75rem 1rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: var(--transition);
+      -webkit-appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-toggle-pwd {
+      position: absolute;
+      right: 0.75rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.15rem;
+      padding: 0.35rem;
+      opacity: 0.75;
+      transition: opacity 0.2s;
+    }
+
+    .btn-toggle-pwd:hover { opacity: 1; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 44px;
+      padding: 0.7rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.925rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      white-space: nowrap;
+      text-decoration: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-input);
+      border-color: var(--primary);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover {
+      background: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-danger {
+      background: var(--color-rose);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover { background: #e11d48; }
+
+    .btn-install-pwa {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      font-weight: 700;
+    }
+
+    .btn-install-pwa:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      min-height: 36px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.825rem;
+    }
+
+    .btn-block { width: 100%; }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      min-height: 40px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1.1rem;
+    }
+
+    .btn-icon:hover { transform: scale(1.05); }
+
+    .login-footer-hint {
+      margin-top: 1.5rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    /* PWA Install Banner inside Dashboard */
+    .pwa-install-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.15) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pwa-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .pwa-banner-icon {
+      font-size: 1.8rem;
+    }
+
+    .pwa-banner-text h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .pwa-banner-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* ========================================================
+       2. APP SHELL & TOP NAVIGATION
+       ======================================================== */
+    #app-shell {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 12px;
+      margin: 12px 24px 0 24px;
+      z-index: 100;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-home-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .brand-logo-img-small {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .brand-names {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-title-text {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .app-subtitle-tag {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    /* Live Clock Pill */
+    .live-clock-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.4rem 1rem;
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+    }
+
+    .live-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-emerald);
+      box-shadow: 0 0 8px var(--color-emerald);
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .header-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .app-main-content {
+      flex: 1;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Mobile Bottom Navigation Bar (Phones only) */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: var(--bg-surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-color);
+      padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px)) 0.75rem;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .nav-tab-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.725rem;
+      font-weight: 600;
+      padding: 0.35rem 0.5rem;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+      min-width: 54px;
+    }
+
+    .nav-tab-btn .tab-icon {
+      font-size: 1.25rem;
+    }
+
+    .nav-tab-btn.active, .nav-tab-btn:hover {
+      color: var(--primary);
+    }
+
+    /* ========================================================
+       3. MAIN DASHBOARD VIEW
+       ======================================================== */
+    .dashboard-welcome {
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-welcome h2 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .dashboard-welcome p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Live Summary Stats Row (8 Cards) */
+    .summary-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-box {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .stat-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .stat-data {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label-text {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .stat-number-text {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    /* Three Big Interactive Cards */
+    .big-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+    }
+
+    .big-nav-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      padding: 2.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: 1px solid var(--border-color);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .big-nav-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .card-top-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+    }
+    .accent-pay { background: linear-gradient(90deg, #10b981, #059669); }
+    .accent-att { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+    .accent-work { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+
+    .big-card-icon-box {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .icon-box-pay { background: var(--color-emerald-bg); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .icon-box-att { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .icon-box-work { background: var(--color-violet-bg); border: 1px solid rgba(139, 92, 246, 0.3); }
+
+    .big-card-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+    }
+
+    .big-card-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .card-bottom-action {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--primary);
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .big-nav-card:hover .card-bottom-action .arrow {
+      transform: translateX(5px);
+    }
+    .card-bottom-action .arrow { transition: transform 0.2s; }
+
+    /* ========================================================
+       4. NOTEBOOK SECTIONS (PAYMENT, ATTENDANCE, WORKING)
+       ======================================================== */
+    .notebook-shell {
+      padding: 2rem;
+      position: relative;
+    }
+
+    .notebook-top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.75rem;
+      border-bottom: 2px dashed var(--border-color);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .notebook-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .notebook-icon { font-size: 1.75rem; }
+
+    .notebook-title-wrap h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    /* Notebook Entry Form Box */
+    .entry-form-container {
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .entry-form-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .entry-form-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-grid-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Section Stats Summary Ribbon */
+    .section-stats-ribbon {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .ribbon-stat-item {
+      padding: 0.85rem 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Toolbar: Search, Date Filter, Sort, CSV */
+    .section-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.85rem 1.15rem;
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.25rem;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 240px;
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .search-input-wrap .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+
+    .search-input-wrap input {
+      padding-left: 2.35rem;
+      font-size: 0.925rem;
+    }
+
+    .date-filter-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .date-filter-wrap input[type="date"] {
+      min-height: 38px;
+      padding: 0.45rem 0.65rem;
+      font-size: 0.875rem;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Dual Display Mode Toggle Button (Mobile Cards vs Desktop Table) */
+    .view-mode-pill {
+      display: inline-flex;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .view-mode-pill button {
+      border: none;
+      background: transparent;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.775rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .view-mode-pill button.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Notebook Styled Table */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .notebook-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .notebook-data-table th {
+      padding: 0.9rem 1.15rem;
+      font-size: 0.775rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      border-bottom: 2px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    .notebook-data-table td {
+      padding: 0.9rem 1.15rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      color: var(--text-main);
+    }
+
+    .notebook-data-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .th-action, .td-action {
+      text-align: right;
+      white-space: nowrap;
+      width: 140px;
+    }
+
+    .action-btn-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      min-height: 34px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .action-btn-pill:hover {
+      background: var(--border-color);
+      transform: translateY(-1px);
+    }
+
+    .action-btn-pill.danger:hover {
+      background: var(--color-rose-bg);
+      border-color: var(--color-rose);
+      color: var(--color-rose);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-full);
+      font-size: 0.775rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-paid { background: var(--color-emerald-bg); color: var(--color-emerald); border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-unpaid { background: var(--color-rose-bg); color: var(--color-rose); border: 1px solid rgba(244, 63, 94, 0.35); }
+    .badge-partial { background: var(--color-amber-bg); color: var(--color-amber); border: 1px solid rgba(245, 158, 11, 0.35); }
+
+    .badge-present { background: var(--color-emerald-bg); color: var(--color-emerald); border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-absent { background: var(--color-rose-bg); color: var(--color-rose); border: 1px solid rgba(244, 63, 94, 0.35); }
+
+    .badge-right { background: var(--color-emerald-bg); color: var(--color-emerald); border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-wrong { background: var(--color-rose-bg); color: var(--color-rose); border: 1px solid rgba(244, 63, 94, 0.35); }
+
+    /* Student History Link */
+    .student-history-btn {
+      color: inherit;
+      text-decoration: none;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+    }
+    .student-history-btn:hover { color: var(--primary); text-decoration: underline; }
+
+    /* Empty State */
+    .empty-state-box {
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+    }
+
+    .empty-state-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+    .empty-state-box h4 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .empty-state-box p { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* ========================================================
+       5. MODALS & POPUPS
+       ======================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      animation: modalScale 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-lg { max-width: 720px; }
+    .modal-sm { max-width: 420px; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes modalScale {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-top h3 { font-size: 1.2rem; font-weight: 800; }
+
+    .modal-close-x {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.25rem 0.5rem;
+    }
+    .modal-close-x:hover { color: var(--text-main); }
+
+    .modal-bottom-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* History Modal Stats */
+    .history-stat-strip {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.25rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .hist-item { text-align: center; flex: 1; min-width: 60px; }
+    .hist-item .lbl { font-size: 0.75rem; color: var(--text-dim); }
+    .hist-item .val { font-size: 1.1rem; font-weight: 800; }
+
+    /* Toast Container */
+    .toast-tray {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 600;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      pointer-events: auto;
+      min-width: 260px;
+      padding: 0.85rem 1.15rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      animation: toastSlide 0.3s ease-out;
+    }
+
+    @keyframes toastSlide {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast-msg.toast-success { border-left: 4px solid var(--color-emerald); }
+    .toast-msg.toast-error { border-left: 4px solid var(--color-rose); }
+    .toast-msg.toast-info { border-left: 4px solid var(--primary); }
+
+    /* ========================================================
+       6. SPECIAL PHONE / MOBILE CARD TRANSFORMATION STYLES
+       When in 'card-mode' (or on small screens), tables
+       transform into readable touch-friendly cards!
+       ======================================================== */
+    .card-view-active table.notebook-data-table,
+    .card-view-active table.notebook-data-table tbody,
+    .card-view-active table.notebook-data-table tr,
+    .card-view-active table.notebook-data-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .card-view-active table.notebook-data-table thead {
+      display: none;
+    }
+
+    .card-view-active table.notebook-data-table tr {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 0.85rem;
+      padding: 1rem;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-view-active table.notebook-data-table td {
+      border: none;
+      padding: 0.35rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.875rem;
+      text-align: right;
+    }
+
+    .card-view-active table.notebook-data-table td::before {
+      content: attr(data-label);
+      font-weight: 700;
+      font-size: 0.775rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      text-align: left;
+      margin-right: 0.75rem;
+    }
+
+    .card-view-active table.notebook-data-table td.td-action {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: stretch;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .card-view-active table.notebook-data-table td.td-action::before {
+      display: none;
+    }
+
+    .card-view-active table.notebook-data-table td.td-action .action-btn-pill {
+      flex: 1;
+      min-height: 40px;
+    }
+
+    /* ========================================================
+       7. RESPONSIVE BREAKPOINTS (Desktop, Tablet, Phone)
+       ======================================================== */
+    /* Tablet (<= 1024px) */
+    @media (max-width: 1024px) {
+      .summary-stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .big-cards-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Mobile / Phone (<= 768px) */
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); /* clearance for bottom navigation */
+      }
+
+      .app-header {
+        margin: 8px 10px 0 10px;
+        padding: 0.6rem 0.85rem;
+        border-radius: var(--radius-md);
+      }
+
+      .live-clock-pill { display: none; } /* saves space in mobile header */
+      .header-nav-actions .btn-sm { display: none; } /* mobile bottom nav handles it */
+
+      .app-main-content {
+        padding: 14px 10px;
+      }
+
+      .mobile-bottom-nav {
+        display: flex; /* Show bottom thumb navigation */
+      }
+
+      .dashboard-welcome h2 {
+        font-size: 1.45rem;
+      }
+
+      .pwa-install-banner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .pwa-install-banner .btn {
+        width: 100%;
+      }
+
+      /* 2-column compact grid for 8 summary stats on phones */
+      .summary-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .stat-box {
+        padding: 0.75rem 0.85rem;
+        gap: 0.65rem;
+      }
+
+      .stat-icon-wrap {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+      }
+
+      .stat-number-text {
+        font-size: 1.15rem;
+      }
+
+      .stat-label-text {
+        font-size: 0.72rem;
+      }
+
+      /* 1-column for large cards on phone */
+      .big-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.15rem;
+      }
+
+      .big-nav-card {
+        padding: 1.5rem 1.25rem;
+      }
+
+      .notebook-shell {
+        padding: 1.15rem 0.85rem;
+        border-radius: var(--radius-md);
+      }
+
+      .notebook-top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .notebook-top-header .btn {
+        width: 100%;
+      }
+
+      .entry-form-container {
+        padding: 1.15rem 0.85rem;
+      }
+
+      .form-grid-row {
+        grid-template-columns: 1fr; /* 1 field per line on phone */
+        gap: 0.85rem;
+      }
+
+      .form-actions-bar {
+        flex-direction: column;
+      }
+
+      .form-actions-bar .btn {
+        width: 100%;
+      }
+
+      .section-stats-ribbon {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+      }
+
+      .ribbon-stat-item {
+        padding: 0.65rem 0.75rem;
+      }
+
+      .section-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        padding: 0.85rem;
+      }
+
+      .search-input-wrap {
+        max-width: 100%;
+        min-width: 100%;
+      }
+
+      .toolbar-left {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .date-filter-wrap {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .date-filter-wrap input[type="date"] {
+        flex: 1;
+      }
+
+      .toolbar-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .toolbar-right .btn {
+        flex: 1;
+      }
+
+      /* Mobile Modal Adaptations */
+      .modal-card {
+        max-height: 88vh;
+        padding: 1.25rem 1rem;
+        border-radius: var(--radius-md);
+      }
+
+      .toast-tray {
+        left: 12px;
+        right: 12px;
+        bottom: 84px; /* above mobile bottom nav */
+      }
+
+      .toast-msg {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+
+    /* Extra Small Phone (<= 400px, e.g. iPhone SE) */
+    @media (max-width: 400px) {
+      .summary-stats-grid {
+        grid-template-columns: 1fr; /* 1 per line if screen is tiny */
+      }
+      .section-stats-ribbon {
+        grid-template-columns: 1fr;
+      }
+      .app-title-text {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PWA Native Splash / Loading Screen -->
+  <div id="app-splash-screen">
+    <div class="splash-logo-wrap">
+      <img src="icon-192.png" alt="Student Management" class="splash-logo-img">
+    </div>
+    <div class="splash-title">Student Management</div>
+    <div class="splash-loader-bar"></div>
+  </div>
+
+  <!-- Background Ambient Particles Canvas -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- ========================================================
+       1. LOGIN VIEW (Responsive for Desktop & Phone)
+       ======================================================== -->
+  <section id="view-login">
+    <div class="login-container">
+      <div class="login-card glass-panel">
+        <div class="login-header">
+          <div class="brand-icon-box">
+            <img src="icon-192.png" alt="App Icon" class="brand-icon-img">
+          </div>
+          <h1 class="brand-title">Student Management</h1>
+          <p class="brand-subtitle">Private Digital Notebook & Personal Work Tracker</p>
+        </div>
+
+        <!-- Wrong Username/Password Alert -->
+        <div id="login-error-alert" class="alert-banner" style="display: none;">
+          <span>⚠️</span>
+          <span>Wrong username or password</span>
+        </div>
+
+        <form id="login-form" autocomplete="off">
+          <div class="form-group">
+            <label for="login-username">Name / Username</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="login-username" placeholder="Enter username" required autofocus autocomplete="username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <div class="input-wrap">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-password" placeholder="Enter password" required autocomplete="current-password">
+              <button type="button" id="btn-toggle-login-pwd" class="btn-toggle-pwd" title="Show or hide password">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: 0.5rem;">
+            <span>Sign In to Notebook</span>
+            <span>→</span>
+          </button>
+        </form>
+
+        <div class="login-footer-hint">
+          <span>Configurable in script: <strong>admin</strong> / <strong>123</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       MAIN APP SHELL (DASHBOARD & NOTEBOOKS)
+       ======================================================== -->
+  <div id="app-shell" style="display: none;">
+    
+    <!-- Top Header -->
+    <header class="app-header glass-panel">
+      <div class="header-content">
+        <div class="brand-home-link" onclick="App.showView('dashboard')" title="Go to Dashboard">
+          <img src="icon-192.png" alt="Logo" class="brand-logo-img-small">
+          <div class="brand-names">
+            <span class="app-title-text">Student Management</span>
+            <span class="app-subtitle-tag">Personal Notebook</span>
+          </div>
+        </div>
+
+        <!-- Live Clock & Date (Desktop) -->
+        <div class="live-clock-pill" title="Current Date & Time">
+          <span class="live-pulse-dot"></span>
+          <span id="header-date">--/--/----</span>
+          <span style="opacity: 0.4;">•</span>
+          <span id="header-time">--:--:--</span>
+        </div>
+
+        <!-- Header Actions (Desktop & Mobile) -->
+        <div class="header-nav-actions">
+          <!-- Install PWA Button in Header -->
+          <button class="btn btn-install-pwa btn-sm pwa-install-trigger" style="display: none;" onclick="App.triggerPwaInstall()">
+            <span>📲 Install App</span>
+          </button>
+
+          <button class="btn btn-secondary btn-sm" onclick="App.showView('dashboard')" title="Dashboard">
+            <span>🏠 Dashboard</span>
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="App.openModal('modal-backup')" title="Backup & Settings">
+            <span>⚙️ Backup</span>
+          </button>
+          <button class="btn-icon" id="theme-toggle-btn" title="Toggle Light / Dark Mode">
+            <span id="theme-icon-indicator">🌙</span>
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="App.logout()" title="Sign Out">
+            <span>🚪 Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="app-main-content">
+      
+      <!-- ========================================================
+           2. MAIN DASHBOARD VIEW
+           ======================================================== -->
+      <section id="view-dashboard" class="app-section">
+        
+        <!-- PWA Install Banner (Shown when browser supports PWA installation) -->
+        <div id="pwa-hero-install-banner" class="pwa-install-banner" style="display: none;">
+          <div class="pwa-banner-left">
+            <span class="pwa-banner-icon">📲</span>
+            <div class="pwa-banner-text">
+              <h4>Install Student Management App</h4>
+              <p>Add to your Android Home Screen for full-screen standalone mobile experience & offline access.</p>
+            </div>
+          </div>
+          <button class="btn btn-install-pwa btn-sm pwa-install-trigger" onclick="App.triggerPwaInstall()">
+            <span>📲 Install App</span>
+          </button>
+        </div>
+
+        <div class="dashboard-welcome">
+          <h2>Welcome to your <span class="gradient-text">Private Digital Notebook</span></h2>
+          <p>Securely record student payments, track attendance, and manage daily work logs.</p>
+        </div>
+
+        <!-- 8 Live Summary Cards (Desktop 4-col, Phone 2-col) -->
+        <div class="summary-stats-grid">
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-emerald-bg);">💰</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Payment Records</span>
+              <span class="stat-number-text" id="dash-stat-pay-count">0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-emerald-bg);">💵</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Total Payment Amount</span>
+              <span class="stat-number-text text-emerald" id="dash-stat-pay-amount">₹0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: rgba(59, 130, 246, 0.15);">📅</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Attendance Records</span>
+              <span class="stat-number-text" id="dash-stat-att-count">0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-emerald-bg);">✅</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Total Present</span>
+              <span class="stat-number-text text-emerald" id="dash-stat-att-present">0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-rose-bg);">❌</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Total Absent</span>
+              <span class="stat-number-text text-rose" id="dash-stat-att-absent">0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-violet-bg);">📝</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Working Records</span>
+              <span class="stat-number-text" id="dash-stat-work-count">0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-emerald-bg);">🎯</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Total Right Work</span>
+              <span class="stat-number-text text-emerald" id="dash-stat-work-right">0</span>
+            </div>
+          </div>
+          <div class="stat-box glass-card">
+            <div class="stat-icon-wrap" style="background: var(--color-rose-bg);">⚠️</div>
+            <div class="stat-data">
+              <span class="stat-label-text">Total Wrong Work</span>
+              <span class="stat-number-text text-rose" id="dash-stat-work-wrong">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Three Large Interactive Cards -->
+        <div class="big-cards-grid">
+          <!-- Card 1: Student Payment -->
+          <div class="big-nav-card glass-card" onclick="App.showView('payment')">
+            <div class="card-top-accent accent-pay"></div>
+            <div class="big-card-icon-box icon-box-pay">💰</div>
+            <h3 class="big-card-title">Student Payment Chart</h3>
+            <p class="big-card-sub">Manage student payment records, fee status, and totals</p>
+            <div class="card-bottom-action">
+              <span>Open Payment Notebook</span>
+              <span class="arrow">→</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Student Attendance -->
+          <div class="big-nav-card glass-card" onclick="App.showView('attendance')">
+            <div class="card-top-accent accent-att"></div>
+            <div class="big-card-icon-box icon-box-att">📅</div>
+            <h3 class="big-card-title">Student Attendance Chart</h3>
+            <p class="big-card-sub">Record daily student attendance, absences, and view histories</p>
+            <div class="card-bottom-action">
+              <span>Open Attendance Notebook</span>
+              <span class="arrow">→</span>
+            </div>
+          </div>
+
+          <!-- Card 3: My Working -->
+          <div class="big-nav-card glass-card" onclick="App.showView('working')">
+            <div class="card-top-accent accent-work"></div>
+            <div class="big-card-icon-box icon-box-work">📝</div>
+            <h3 class="big-card-title">My Working Chart</h3>
+            <p class="big-card-sub">Track daily personal tasks, verify right & wrong work results</p>
+            <div class="card-bottom-action">
+              <span>Open Working Notebook</span>
+              <span class="arrow">→</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           3. STUDENT PAYMENT CHART SECTION
+           ======================================================== -->
+      <section id="view-payment" class="app-section" style="display: none;">
+        <div class="notebook-shell glass-panel">
+          
+          <div class="notebook-top-header">
+            <div class="notebook-title-wrap">
+              <span class="notebook-icon">💰</span>
+              <h2>Student Payment Chart</h2>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.showView('dashboard')">
+              <span>← Back to Dashboard</span>
+            </button>
+          </div>
+
+          <!-- Add New Entry / Edit Entry Form -->
+          <div class="entry-form-container">
+            <div class="entry-form-header">
+              <h3 id="payment-form-title">➕ Add New Payment Entry</h3>
+              <span id="payment-editing-badge" class="badge badge-partial" style="display: none;">Editing Mode</span>
+            </div>
+            <form id="payment-form">
+              <input type="hidden" id="pay-edit-id">
+              <div class="form-grid-row">
+                <div class="form-group" style="margin: 0;">
+                  <label for="pay-student-name">Student Name *</label>
+                  <input type="text" id="pay-student-name" placeholder="e.g. Rahul Sharma" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="pay-amount">Payment Amount (₹) *</label>
+                  <input type="number" id="pay-amount" placeholder="e.g. 500" min="0" step="any" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="pay-date">Date *</label>
+                  <input type="date" id="pay-date" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="pay-status">Payment Status *</label>
+                  <select id="pay-status" required>
+                    <option value="Paid">Paid</option>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Partial">Partial</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="pay-note">Note</label>
+                  <input type="text" id="pay-note" placeholder="e.g. September fee, Cash">
+                </div>
+              </div>
+
+              <div class="form-actions-bar">
+                <button type="button" id="pay-cancel-edit-btn" class="btn btn-ghost" style="display: none;" onclick="PaymentNotebook.cancelEdit()">
+                  <span>Cancel Edit</span>
+                </button>
+                <button type="submit" id="pay-submit-btn" class="btn btn-primary">
+                  <span>➕ Add Entry</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Section Summary Statistics -->
+          <div class="section-stats-ribbon">
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">👥</span>
+              <div>
+                <div class="stat-label-text">Total Students</div>
+                <strong id="pay-stat-students">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">💵</span>
+              <div>
+                <div class="stat-label-text">Total Collected</div>
+                <strong class="text-emerald" id="pay-stat-total-amt">₹0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">✅</span>
+              <div>
+                <div class="stat-label-text">Paid Records</div>
+                <strong id="pay-stat-paid-count">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">⏳</span>
+              <div>
+                <div class="stat-label-text">Unpaid / Partial</div>
+                <strong class="text-rose" id="pay-stat-unpaid-count">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Toolbar with View Mode Toggle -->
+          <div class="section-toolbar">
+            <div class="toolbar-left">
+              <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="pay-search-input" placeholder="Search student name or note...">
+              </div>
+              <div class="date-filter-wrap">
+                <label>Date:</label>
+                <input type="date" id="pay-filter-date">
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="PaymentNotebook.clearFilters()">Clear</button>
+            </div>
+            <div class="toolbar-right">
+              <!-- View Mode Switcher (Cards vs Table) -->
+              <div class="view-mode-pill">
+                <button type="button" id="pay-btn-view-card" onclick="App.setViewMode('payment', 'card')">📱 Cards</button>
+                <button type="button" id="pay-btn-view-table" class="active" onclick="App.setViewMode('payment', 'table')">💻 Table</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="App.exportCSV('payments')" title="Export Payment records as CSV">
+                <span>📥 Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Payment Table / Card Container -->
+          <div class="table-container" id="payment-table-container">
+            <table class="notebook-data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">#</th>
+                  <th>Student Name</th>
+                  <th style="text-align: right;">Payment</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Note</th>
+                  <th class="th-action">Action</th>
+                </tr>
+              </thead>
+              <tbody id="payment-table-tbody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+            <div id="pay-empty-state" class="empty-state-box" style="display: none;">
+              <div class="empty-state-icon">💰</div>
+              <h4>No payment records found</h4>
+              <p>Add a payment entry above to start tracking records.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================
+           4. STUDENT ATTENDANCE CHART SECTION
+           ======================================================== -->
+      <section id="view-attendance" class="app-section" style="display: none;">
+        <div class="notebook-shell glass-panel">
+          
+          <div class="notebook-top-header">
+            <div class="notebook-title-wrap">
+              <span class="notebook-icon">📅</span>
+              <h2>Student Attendance Chart</h2>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.showView('dashboard')">
+              <span>← Back to Dashboard</span>
+            </button>
+          </div>
+
+          <!-- Add / Edit Attendance Form -->
+          <div class="entry-form-container">
+            <div class="entry-form-header">
+              <h3 id="att-form-title">➕ Mark Student Attendance</h3>
+              <span id="att-editing-badge" class="badge badge-partial" style="display: none;">Editing Mode</span>
+            </div>
+            <form id="attendance-form">
+              <input type="hidden" id="att-edit-id">
+              <div class="form-grid-row">
+                <div class="form-group" style="margin: 0;">
+                  <label for="att-student-name">Student Name *</label>
+                  <input type="text" id="att-student-name" placeholder="e.g. Amit Kumar" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="att-date">Date *</label>
+                  <input type="date" id="att-date" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="att-status">Attendance *</label>
+                  <select id="att-status" required>
+                    <option value="Present">✅ Present</option>
+                    <option value="Absent">❌ Absent</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="att-note">Note (Optional)</label>
+                  <input type="text" id="att-note" placeholder="e.g. Leave note, Late 10m">
+                </div>
+              </div>
+
+              <div class="form-actions-bar">
+                <button type="button" id="att-cancel-edit-btn" class="btn btn-ghost" style="display: none;" onclick="AttendanceNotebook.cancelEdit()">
+                  <span>Cancel Edit</span>
+                </button>
+                <button type="submit" id="att-submit-btn" class="btn btn-primary">
+                  <span>➕ Add Attendance</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Section Summary Ribbon -->
+          <div class="section-stats-ribbon">
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">📊</span>
+              <div>
+                <div class="stat-label-text">Total Attendance Records</div>
+                <strong id="att-stat-total">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">✅</span>
+              <div>
+                <div class="stat-label-text">Total Present</div>
+                <strong class="text-emerald" id="att-stat-present">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">❌</span>
+              <div>
+                <div class="stat-label-text">Total Absent</div>
+                <strong class="text-rose" id="att-stat-absent">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">🎯</span>
+              <div>
+                <div class="stat-label-text">Attendance Percentage</div>
+                <strong class="text-primary" id="att-stat-percent">0%</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Toolbar with View Mode Toggle -->
+          <div class="section-toolbar">
+            <div class="toolbar-left">
+              <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="att-search-input" placeholder="Search student name...">
+              </div>
+              <div class="date-filter-wrap">
+                <label>Date:</label>
+                <input type="date" id="att-filter-date">
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="AttendanceNotebook.clearFilters()">Clear</button>
+            </div>
+            <div class="toolbar-right">
+              <div class="view-mode-pill">
+                <button type="button" id="att-btn-view-card" onclick="App.setViewMode('attendance', 'card')">📱 Cards</button>
+                <button type="button" id="att-btn-view-table" class="active" onclick="App.setViewMode('attendance', 'table')">💻 Table</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="App.exportCSV('attendance')" title="Export Attendance records as CSV">
+                <span>📥 Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Attendance Table / Card Container -->
+          <div class="table-container" id="attendance-table-container">
+            <table class="notebook-data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">#</th>
+                  <th>Student Name</th>
+                  <th>Date</th>
+                  <th>Attendance</th>
+                  <th>Note</th>
+                  <th class="th-action">Action</th>
+                </tr>
+              </thead>
+              <tbody id="attendance-table-tbody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+            <div id="att-empty-state" class="empty-state-box" style="display: none;">
+              <div class="empty-state-icon">📅</div>
+              <h4>No attendance records found</h4>
+              <p>Mark student attendance above to start tracking.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================
+           5. MY WORKING CHART SECTION
+           ======================================================== -->
+      <section id="view-working" class="app-section" style="display: none;">
+        <div class="notebook-shell glass-panel">
+          
+          <div class="notebook-top-header">
+            <div class="notebook-title-wrap">
+              <span class="notebook-icon">📝</span>
+              <h2>My Working Chart</h2>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="App.showView('dashboard')">
+              <span>← Back to Dashboard</span>
+            </button>
+          </div>
+
+          <!-- Add / Edit Working Form -->
+          <div class="entry-form-container">
+            <div class="entry-form-header">
+              <h3 id="work-form-title">➕ Add Work Entry</h3>
+              <span id="work-editing-badge" class="badge badge-partial" style="display: none;">Editing Mode</span>
+            </div>
+            <form id="working-form">
+              <input type="hidden" id="work-edit-id">
+              <div class="form-grid-row">
+                <div class="form-group" style="margin: 0;">
+                  <label for="work-name">Name *</label>
+                  <input type="text" id="work-name" placeholder="e.g. Rahul Sharma" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="work-date">Date *</label>
+                  <input type="date" id="work-date" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="work-task">Work / Task *</label>
+                  <input type="text" id="work-task" placeholder="e.g. Mathematics, English Essay" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="work-result">Result *</label>
+                  <select id="work-result" required>
+                    <option value="RIGHT">✅ RIGHT</option>
+                    <option value="WRONG">❌ WRONG</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label for="work-note">Note</label>
+                  <input type="text" id="work-note" placeholder="e.g. Good work, Need improvement">
+                </div>
+              </div>
+
+              <div class="form-actions-bar">
+                <button type="button" id="work-cancel-edit-btn" class="btn btn-ghost" style="display: none;" onclick="WorkingNotebook.cancelEdit()">
+                  <span>Cancel Edit</span>
+                </button>
+                <button type="submit" id="work-submit-btn" class="btn btn-primary">
+                  <span>➕ Add Entry</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Section Summary Ribbon -->
+          <div class="section-stats-ribbon">
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">📋</span>
+              <div>
+                <div class="stat-label-text">Total Work Entries</div>
+                <strong id="work-stat-total">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">✅</span>
+              <div>
+                <div class="stat-label-text">Total Right</div>
+                <strong class="text-emerald" id="work-stat-right">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">❌</span>
+              <div>
+                <div class="stat-label-text">Total Wrong</div>
+                <strong class="text-rose" id="work-stat-wrong">0</strong>
+              </div>
+            </div>
+            <div class="ribbon-stat-item glass-card">
+              <span style="font-size: 1.25rem;">🎯</span>
+              <div>
+                <div class="stat-label-text">Right Percentage</div>
+                <strong class="text-violet" id="work-stat-percent">0%</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Search & Filter Toolbar with View Mode Toggle -->
+          <div class="section-toolbar">
+            <div class="toolbar-left">
+              <div class="search-input-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="work-search-input" placeholder="Search name, work/task or note...">
+              </div>
+              <div class="date-filter-wrap">
+                <label>Date:</label>
+                <input type="date" id="work-filter-date">
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="WorkingNotebook.clearFilters()">Clear</button>
+            </div>
+            <div class="toolbar-right">
+              <div class="view-mode-pill">
+                <button type="button" id="work-btn-view-card" onclick="App.setViewMode('working', 'card')">📱 Cards</button>
+                <button type="button" id="work-btn-view-table" class="active" onclick="App.setViewMode('working', 'table')">💻 Table</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="App.exportCSV('working')" title="Export Working records as CSV">
+                <span>📥 Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Working Table / Card Container -->
+          <div class="table-container" id="working-table-container">
+            <table class="notebook-data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">#</th>
+                  <th>Name</th>
+                  <th>Date</th>
+                  <th>Work / Task</th>
+                  <th>Result</th>
+                  <th>Note</th>
+                  <th class="th-action">Action</th>
+                </tr>
+              </thead>
+              <tbody id="working-table-tbody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+            <div id="work-empty-state" class="empty-state-box" style="display: none;">
+              <div class="empty-state-icon">📝</div>
+              <h4>No work records found</h4>
+              <p>Track your daily right & wrong work results above.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ========================================================
+         MOBILE BOTTOM NAVIGATION (Phones only)
+         ======================================================== -->
+    <nav class="mobile-bottom-nav">
+      <button class="nav-tab-btn active" id="mob-nav-dash" onclick="App.showView('dashboard')">
+        <span class="tab-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-tab-btn" id="mob-nav-pay" onclick="App.showView('payment')">
+        <span class="tab-icon">💰</span>
+        <span>Payment</span>
+      </button>
+      <button class="nav-tab-btn" id="mob-nav-att" onclick="App.showView('attendance')">
+        <span class="tab-icon">📅</span>
+        <span>Attendance</span>
+      </button>
+      <button class="nav-tab-btn" id="mob-nav-work" onclick="App.showView('working')">
+        <span class="tab-icon">📝</span>
+        <span>Working</span>
+      </button>
+      <button class="nav-tab-btn" onclick="App.openModal('modal-backup')">
+        <span class="tab-icon">⚙️</span>
+        <span>Backup</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- ========================================================
+       MODALS
+       ======================================================== -->
+
+  <!-- 1. Delete Confirmation Modal -->
+  <div id="modal-delete-confirm" class="modal-overlay" style="display: none;">
+    <div class="modal-card glass-panel modal-sm">
+      <div class="modal-top">
+        <h3 class="text-rose">🗑️ Confirm Deletion</h3>
+        <button class="modal-close-x" onclick="App.closeModal('modal-delete-confirm')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">
+          Are you sure you want to delete this record?
+        </p>
+        <p class="text-muted" style="font-size: 0.85rem;">
+          This action will immediately remove this entry from your browser's localStorage.
+        </p>
+      </div>
+      <div class="modal-bottom-actions">
+        <button type="button" class="btn btn-ghost" onclick="App.closeModal('modal-delete-confirm')">Cancel</button>
+        <button type="button" id="btn-delete-confirmed" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Student Attendance History Modal -->
+  <div id="modal-student-history" class="modal-overlay" style="display: none;">
+    <div class="modal-card glass-panel modal-lg">
+      <div class="modal-top">
+        <h3>📊 Attendance History: <span id="history-modal-name" class="gradient-text"></span></h3>
+        <button class="modal-close-x" onclick="App.closeModal('modal-student-history')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-stat-strip">
+          <div class="hist-item"><div class="lbl">Total Classes</div><div class="val" id="hist-stat-total">0</div></div>
+          <div class="hist-item"><div class="lbl">Present</div><div class="val text-emerald" id="hist-stat-present">0</div></div>
+          <div class="hist-item"><div class="lbl">Absent</div><div class="val text-rose" id="hist-stat-absent">0</div></div>
+          <div class="hist-item"><div class="lbl">Rate</div><div class="val text-primary" id="hist-stat-percent">0%</div></div>
+        </div>
+
+        <div class="table-container" style="max-height: 320px; overflow-y: auto;">
+          <table class="notebook-data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody id="history-modal-tbody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-bottom-actions">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-student-history')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Backup, Restore, Settings & Install App Modal -->
+  <div id="modal-backup" class="modal-overlay" style="display: none;">
+    <div class="modal-card glass-panel">
+      <div class="modal-top">
+        <h3>⚙️ Data Backup & Settings</h3>
+        <button class="modal-close-x" onclick="App.closeModal('modal-backup')">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        
+        <!-- PWA Install Section inside Settings -->
+        <div class="glass-card" style="padding: 1rem; border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08);">
+          <h4 style="margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>📲</span>
+            <span>Mobile App Installation</span>
+          </h4>
+          <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.85rem;">
+            Install Student Management as a standalone Progressive Web App on your phone or computer.
+          </p>
+          <button class="btn btn-install-pwa btn-sm pwa-install-trigger" onclick="App.triggerPwaInstall()">
+            <span>📲 Install App</span>
+          </button>
+        </div>
+
+        <!-- Export Backup -->
+        <div class="glass-card" style="padding: 1rem;">
+          <h4 style="margin-bottom: 0.35rem;">📦 Export Full Backup</h4>
+          <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.85rem;">
+            Download all your payment, attendance, and working records into a single JSON file.
+          </p>
+          <button class="btn btn-primary btn-sm" onclick="App.downloadBackup()">
+            <span>Download Backup (.json)</span>
+          </button>
+        </div>
+
+        <!-- Restore Backup -->
+        <div class="glass-card" style="padding: 1rem;">
+          <h4 style="margin-bottom: 0.35rem;">📥 Restore Backup</h4>
+          <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.85rem;">
+            Select a previously downloaded JSON backup file to restore records.
+          </p>
+          <input type="file" id="backup-file-input" accept=".json" style="display: none;" onchange="App.restoreBackup(event)">
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('backup-file-input').click()">
+            <span>Restore Backup File</span>
+          </button>
+        </div>
+
+        <!-- Change Password / Credentials -->
+        <div class="glass-card" style="padding: 1rem;">
+          <h4 style="margin-bottom: 0.35rem;">🔑 Update Login Credentials</h4>
+          <form id="change-creds-form" style="margin-top: 0.75rem;">
+            <div class="form-group">
+              <label for="new-username-input">Username</label>
+              <input type="text" id="new-username-input" required>
+            </div>
+            <div class="form-group">
+              <label for="new-password-input">New Password</label>
+              <input type="password" id="new-password-input" required>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-sm">
+              <span>Save New Credentials</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Clear All Data (Protected) -->
+        <div class="glass-card" style="padding: 1rem; border-color: rgba(244, 63, 94, 0.3);">
+          <h4 class="text-rose" style="margin-bottom: 0.35rem;">⚠️ Clear All Data</h4>
+          <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.85rem;">
+            Permanently wipe all records from this browser. This cannot be undone.
+          </p>
+          <button class="btn btn-danger btn-sm" onclick="App.clearAllData()">
+            <span>Clear All Data</span>
+          </button>
+        </div>
+
+      </div>
+      <div class="modal-bottom-actions">
+        <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-backup')">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. PWA Installation Instructions Modal (Fallback for iOS / manual browsers) -->
+  <div id="modal-install-instructions" class="modal-overlay" style="display: none;">
+    <div class="modal-card glass-panel modal-sm">
+      <div class="modal-top">
+        <h3>📲 How to Install App</h3>
+        <button class="modal-close-x" onclick="App.closeModal('modal-install-instructions')">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 0.9rem; line-height: 1.6;">
+        <div id="install-guide-android" style="margin-bottom: 1rem;">
+          <h4 style="color: var(--color-emerald); margin-bottom: 0.4rem;">🤖 On Android (Chrome / Edge):</h4>
+          <ol style="padding-left: 1.25rem; color: var(--text-muted);">
+            <li>Tap the <strong>three dots (⋮)</strong> at the top right of your browser.</li>
+            <li>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+            <li>Confirm installation to add <strong>Student Management</strong> to your home screen!</li>
+          </ol>
+        </div>
+        <div id="install-guide-ios">
+          <h4 style="color: var(--primary); margin-bottom: 0.4rem;">🍏 On iPhone / iPad (Safari):</h4>
+          <ol style="padding-left: 1.25rem; color: var(--text-muted);">
+            <li>Tap the <strong>Share button</strong> (square with arrow pointing up) at the bottom.</li>
+            <li>Scroll down and tap <strong>"Add to Home Screen"</strong>.</li>
+            <li>Tap <strong>"Add"</strong> in the top right corner.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="modal-bottom-actions">
+        <button type="button" class="btn btn-primary" onclick="App.closeModal('modal-install-instructions')">Got It!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-tray" class="toast-tray"></div>
+
+  <!-- ========================================================
+       JAVASCRIPT APPLICATION LOGIC & SERVICE WORKER
+       ======================================================== -->
+  <script>
+    /**
+     * ========================================================
+     * CONFIGURATION & OWNER CREDENTIALS
+     * Easily modify the default login username and password here.
+     * ========================================================
+     */
+    const CONFIG = {
+      DEFAULT_USERNAME: "admin",
+      DEFAULT_PASSWORD: "123",
+      APP_TITLE: "Student Management",
+      STORAGE_KEYS: {
+        PAYMENTS: "studentPayments",
+        ATTENDANCE: "studentAttendance",
+        WORKING: "myWorkingRecords",
+        SESSION: "studentMgmtSession",
+        THEME: "studentMgmtTheme",
+        CREDENTIALS: "studentMgmtCredentials"
+      }
+    };
+
+    /**
+     * ========================================================
+     * STORAGE UTILITIES
+     * Safe JSON serialization with localStorage
+     * ========================================================
+     */
+    const Storage = {
+      get(key, defaultValue = []) {
+        try {
+          const item = localStorage.getItem(key);
+          return item ? JSON.parse(item) : defaultValue;
+        } catch (e) {
+          console.error(`Error reading ${key} from localStorage:`, e);
+          return defaultValue;
+        }
+      },
+
+      set(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+          console.error(`Error writing ${key} to localStorage:`, e);
+        }
+      },
+
+      remove(key) {
+        localStorage.removeItem(key);
+      },
+
+      getCredentials() {
+        return this.get(CONFIG.STORAGE_KEYS.CREDENTIALS, {
+          username: CONFIG.DEFAULT_USERNAME,
+          password: CONFIG.DEFAULT_PASSWORD
+        });
+      },
+
+      setCredentials(username, password) {
+        this.set(CONFIG.STORAGE_KEYS.CREDENTIALS, { username, password });
+      }
+    };
+
+    /**
+     * ========================================================
+     * STUDENT PAYMENT NOTEBOOK MODULE
+     * Key: 'studentPayments'
+     * ========================================================
+     */
+    const PaymentNotebook = {
+      records: [],
+      editingId: null,
+      filters: { search: '', date: '' },
+
+      init() {
+        this.records = Storage.get(CONFIG.STORAGE_KEYS.PAYMENTS, []);
+        this.bindEvents();
+        this.render();
+      },
+
+      bindEvents() {
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+
+        const searchInput = document.getElementById('pay-search-input');
+        searchInput.addEventListener('input', (e) => {
+          this.filters.search = e.target.value.toLowerCase().trim();
+          this.render();
+        });
+
+        const dateFilter = document.getElementById('pay-filter-date');
+        dateFilter.addEventListener('change', (e) => {
+          this.filters.date = e.target.value;
+          this.render();
+        });
+
+        document.getElementById('pay-date').value = App.getTodayISO();
+      },
+
+      handleFormSubmit(e) {
+        e.preventDefault();
+        const studentName = document.getElementById('pay-student-name').value.trim();
+        const amount = parseFloat(document.getElementById('pay-amount').value);
+        const date = document.getElementById('pay-date').value;
+        const status = document.getElementById('pay-status').value;
+        const note = document.getElementById('pay-note').value.trim();
+
+        if (!studentName || isNaN(amount) || !date) {
+          App.showToast('Please fill all required fields.', 'error');
+          return;
+        }
+
+        if (this.editingId) {
+          const idx = this.records.findIndex(r => r.id === this.editingId);
+          if (idx !== -1) {
+            this.records[idx] = {
+              ...this.records[idx],
+              studentName,
+              amount,
+              date,
+              status,
+              note,
+              updatedAt: new Date().toISOString()
+            };
+            App.showToast('Payment record updated successfully!', 'success');
+          }
+          this.cancelEdit();
+        } else {
+          const newRecord = {
+            id: 'pay_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            studentName,
+            amount,
+            date,
+            status,
+            note,
+            createdAt: new Date().toISOString()
+          };
+          this.records.unshift(newRecord);
+          App.showToast('Payment entry added successfully!', 'success');
+          document.getElementById('payment-form').reset();
+          document.getElementById('pay-date').value = App.getTodayISO();
+        }
+
+        Storage.set(CONFIG.STORAGE_KEYS.PAYMENTS, this.records);
+        this.render();
+        App.updateDashboardSummary();
+      },
+
+      startEdit(id) {
+        const rec = this.records.find(r => r.id === id);
+        if (!rec) return;
+
+        this.editingId = id;
+        document.getElementById('pay-edit-id').value = id;
+        document.getElementById('pay-student-name').value = rec.studentName;
+        document.getElementById('pay-amount').value = rec.amount;
+        document.getElementById('pay-date').value = rec.date;
+        document.getElementById('pay-status').value = rec.status;
+        document.getElementById('pay-note').value = rec.note || '';
+
+        document.getElementById('payment-form-title').textContent = '✏️ Edit Payment Entry';
+        document.getElementById('payment-editing-badge').style.display = 'inline-flex';
+        document.getElementById('pay-submit-btn').innerHTML = '<span>💾 Update Entry</span>';
+        document.getElementById('pay-cancel-edit-btn').style.display = 'inline-flex';
+
+        document.getElementById('payment-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      },
+
+      cancelEdit() {
+        this.editingId = null;
+        document.getElementById('payment-form').reset();
+        document.getElementById('pay-edit-id').value = '';
+        document.getElementById('pay-date').value = App.getTodayISO();
+
+        document.getElementById('payment-form-title').textContent = '➕ Add New Payment Entry';
+        document.getElementById('payment-editing-badge').style.display = 'none';
+        document.getElementById('pay-submit-btn').innerHTML = '<span>➕ Add Entry</span>';
+        document.getElementById('pay-cancel-edit-btn').style.display = 'none';
+      },
+
+      promptDelete(id) {
+        App.openDeleteModal(() => {
+          this.records = this.records.filter(r => r.id !== id);
+          Storage.set(CONFIG.STORAGE_KEYS.PAYMENTS, this.records);
+          if (this.editingId === id) this.cancelEdit();
+          this.render();
+          App.updateDashboardSummary();
+          App.showToast('Payment record deleted.', 'info');
+        });
+      },
+
+      clearFilters() {
+        document.getElementById('pay-search-input').value = '';
+        document.getElementById('pay-filter-date').value = '';
+        this.filters.search = '';
+        this.filters.date = '';
+        this.render();
+      },
+
+      render() {
+        const tbody = document.getElementById('payment-table-tbody');
+        const emptyState = document.getElementById('pay-empty-state');
+        const table = tbody.closest('table');
+
+        let filtered = this.records.filter(r => {
+          const matchesSearch = !this.filters.search ||
+            r.studentName.toLowerCase().includes(this.filters.search) ||
+            (r.note && r.note.toLowerCase().includes(this.filters.search));
+          const matchesDate = !this.filters.date || r.date === this.filters.date;
+          return matchesSearch && matchesDate;
+        });
+
+        const uniqueStudents = new Set(this.records.map(r => r.studentName.toLowerCase().trim())).size;
+        const totalAmount = this.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+        const paidCount = this.records.filter(r => r.status === 'Paid').length;
+        const unpaidCount = this.records.filter(r => r.status !== 'Paid').length;
+
+        document.getElementById('pay-stat-students').textContent = uniqueStudents;
+        document.getElementById('pay-stat-total-amt').textContent = `₹${totalAmount.toLocaleString('en-IN')}`;
+        document.getElementById('pay-stat-paid-count').textContent = paidCount;
+        document.getElementById('pay-stat-unpaid-count').textContent = unpaidCount;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          table.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        table.style.display = 'table';
+        emptyState.style.display = 'none';
+
+        tbody.innerHTML = filtered.map((r, i) => {
+          let badgeClass = 'badge-paid';
+          if (r.status === 'Unpaid') badgeClass = 'badge-unpaid';
+          if (r.status === 'Partial') badgeClass = 'badge-partial';
+
+          return `
+            <tr>
+              <td data-label="#"><strong>${i + 1}</strong></td>
+              <td data-label="Student Name"><strong>${App.escapeHtml(r.studentName)}</strong></td>
+              <td data-label="Payment" class="text-emerald" style="text-align: right;"><strong>₹${Number(r.amount).toLocaleString('en-IN')}</strong></td>
+              <td data-label="Date">${App.formatDisplayDate(r.date)}</td>
+              <td data-label="Status"><span class="badge ${badgeClass}">${App.escapeHtml(r.status)}</span></td>
+              <td data-label="Note">${App.escapeHtml(r.note || '-')}</td>
+              <td class="td-action">
+                <button class="action-btn-pill" onclick="PaymentNotebook.startEdit('${r.id}')" title="Edit">✏️ Edit</button>
+                <button class="action-btn-pill danger" onclick="PaymentNotebook.promptDelete('${r.id}')" title="Delete">🗑️ Delete</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    };
+
+    /**
+     * ========================================================
+     * STUDENT ATTENDANCE NOTEBOOK MODULE
+     * Key: 'studentAttendance'
+     * ========================================================
+     */
+    const AttendanceNotebook = {
+      records: [],
+      editingId: null,
+      filters: { search: '', date: '' },
+
+      init() {
+        this.records = Storage.get(CONFIG.STORAGE_KEYS.ATTENDANCE, []);
+        this.bindEvents();
+        this.render();
+      },
+
+      bindEvents() {
+        const form = document.getElementById('attendance-form');
+        form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+
+        const searchInput = document.getElementById('att-search-input');
+        searchInput.addEventListener('input', (e) => {
+          this.filters.search = e.target.value.toLowerCase().trim();
+          this.render();
+        });
+
+        const dateFilter = document.getElementById('att-filter-date');
+        dateFilter.addEventListener('change', (e) => {
+          this.filters.date = e.target.value;
+          this.render();
+        });
+
+        document.getElementById('att-date').value = App.getTodayISO();
+      },
+
+      handleFormSubmit(e) {
+        e.preventDefault();
+        const studentName = document.getElementById('att-student-name').value.trim();
+        const date = document.getElementById('att-date').value;
+        const status = document.getElementById('att-status').value;
+        const note = document.getElementById('att-note').value.trim();
+
+        if (!studentName || !date || !status) {
+          App.showToast('Please fill all required fields.', 'error');
+          return;
+        }
+
+        if (this.editingId) {
+          const idx = this.records.findIndex(r => r.id === this.editingId);
+          if (idx !== -1) {
+            this.records[idx] = {
+              ...this.records[idx],
+              studentName,
+              date,
+              status,
+              note,
+              updatedAt: new Date().toISOString()
+            };
+            App.showToast('Attendance updated successfully!', 'success');
+          }
+          this.cancelEdit();
+        } else {
+          const newRecord = {
+            id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            studentName,
+            date,
+            status,
+            note,
+            createdAt: new Date().toISOString()
+          };
+          this.records.unshift(newRecord);
+          App.showToast('Attendance marked successfully!', 'success');
+          document.getElementById('attendance-form').reset();
+          document.getElementById('att-date').value = App.getTodayISO();
+        }
+
+        Storage.set(CONFIG.STORAGE_KEYS.ATTENDANCE, this.records);
+        this.render();
+        App.updateDashboardSummary();
+      },
+
+      startEdit(id) {
+        const rec = this.records.find(r => r.id === id);
+        if (!rec) return;
+
+        this.editingId = id;
+        document.getElementById('att-edit-id').value = id;
+        document.getElementById('att-student-name').value = rec.studentName;
+        document.getElementById('att-date').value = rec.date;
+        document.getElementById('att-status').value = rec.status;
+        document.getElementById('att-note').value = rec.note || '';
+
+        document.getElementById('att-form-title').textContent = '✏️ Edit Attendance Entry';
+        document.getElementById('att-editing-badge').style.display = 'inline-flex';
+        document.getElementById('att-submit-btn').innerHTML = '<span>💾 Update Entry</span>';
+        document.getElementById('att-cancel-edit-btn').style.display = 'inline-flex';
+
+        document.getElementById('attendance-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      },
+
+      cancelEdit() {
+        this.editingId = null;
+        document.getElementById('attendance-form').reset();
+        document.getElementById('att-edit-id').value = '';
+        document.getElementById('att-date').value = App.getTodayISO();
+
+        document.getElementById('att-form-title').textContent = '➕ Mark Student Attendance';
+        document.getElementById('att-editing-badge').style.display = 'none';
+        document.getElementById('att-submit-btn').innerHTML = '<span>➕ Add Attendance</span>';
+        document.getElementById('att-cancel-edit-btn').style.display = 'none';
+      },
+
+      promptDelete(id) {
+        App.openDeleteModal(() => {
+          this.records = this.records.filter(r => r.id !== id);
+          Storage.set(CONFIG.STORAGE_KEYS.ATTENDANCE, this.records);
+          if (this.editingId === id) this.cancelEdit();
+          this.render();
+          App.updateDashboardSummary();
+          App.showToast('Attendance record deleted.', 'info');
+        });
+      },
+
+      clearFilters() {
+        document.getElementById('att-search-input').value = '';
+        document.getElementById('att-filter-date').value = '';
+        this.filters.search = '';
+        this.filters.date = '';
+        this.render();
+      },
+
+      showStudentHistory(studentName) {
+        const history = this.records.filter(r => r.studentName.toLowerCase().trim() === studentName.toLowerCase().trim());
+        const total = history.length;
+        const present = history.filter(r => r.status === 'Present').length;
+        const absent = history.filter(r => r.status === 'Absent').length;
+        const rate = total > 0 ? Math.round((present / total) * 100) : 0;
+
+        document.getElementById('history-modal-name').textContent = studentName;
+        document.getElementById('hist-stat-total').textContent = total;
+        document.getElementById('hist-stat-present').textContent = present;
+        document.getElementById('hist-stat-absent').textContent = absent;
+        document.getElementById('hist-stat-percent').textContent = `${rate}%`;
+
+        const tbody = document.getElementById('history-modal-tbody');
+        if (history.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3" class="text-muted" style="text-align:center; padding:1.5rem;">No attendance entries recorded.</td></tr>';
+        } else {
+          tbody.innerHTML = history.map(h => `
+            <tr>
+              <td>${App.formatDisplayDate(h.date)}</td>
+              <td>
+                <span class="badge ${h.status === 'Present' ? 'badge-present' : 'badge-absent'}">
+                  ${h.status === 'Present' ? '✅ Present' : '❌ Absent'}
+                </span>
+              </td>
+              <td>${App.escapeHtml(h.note || '-')}</td>
+            </tr>
+          `).join('');
+        }
+
+        App.openModal('modal-student-history');
+      },
+
+      render() {
+        const tbody = document.getElementById('attendance-table-tbody');
+        const emptyState = document.getElementById('att-empty-state');
+        const table = tbody.closest('table');
+
+        let filtered = this.records.filter(r => {
+          const matchesSearch = !this.filters.search ||
+            r.studentName.toLowerCase().includes(this.filters.search) ||
+            (r.note && r.note.toLowerCase().includes(this.filters.search));
+          const matchesDate = !this.filters.date || r.date === this.filters.date;
+          return matchesSearch && matchesDate;
+        });
+
+        const total = this.records.length;
+        const present = this.records.filter(r => r.status === 'Present').length;
+        const absent = this.records.filter(r => r.status === 'Absent').length;
+        const percent = total > 0 ? Math.round((present / total) * 100) : 0;
+
+        document.getElementById('att-stat-total').textContent = total;
+        document.getElementById('att-stat-present').textContent = present;
+        document.getElementById('att-stat-absent').textContent = absent;
+        document.getElementById('att-stat-percent').textContent = `${percent}%`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          table.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        table.style.display = 'table';
+        emptyState.style.display = 'none';
+
+        tbody.innerHTML = filtered.map((r, i) => {
+          const isPresent = r.status === 'Present';
+          const badgeClass = isPresent ? 'badge-present' : 'badge-absent';
+          const badgeText = isPresent ? '✅ Present' : '❌ Absent';
+
+          return `
+            <tr>
+              <td data-label="#"><strong>${i + 1}</strong></td>
+              <td data-label="Student Name">
+                <span class="student-history-btn" onclick="AttendanceNotebook.showStudentHistory('${App.escapeJs(r.studentName)}')" title="Click to view full attendance history">
+                  ${App.escapeHtml(r.studentName)} 🔍
+                </span>
+              </td>
+              <td data-label="Date">${App.formatDisplayDate(r.date)}</td>
+              <td data-label="Attendance"><span class="badge ${badgeClass}">${badgeText}</span></td>
+              <td data-label="Note">${App.escapeHtml(r.note || '-')}</td>
+              <td class="td-action">
+                <button class="action-btn-pill" onclick="AttendanceNotebook.startEdit('${r.id}')" title="Edit">✏️ Edit</button>
+                <button class="action-btn-pill danger" onclick="AttendanceNotebook.promptDelete('${r.id}')" title="Delete">🗑️ Delete</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    };
+
+    /**
+     * ========================================================
+     * MY WORKING CHART NOTEBOOK MODULE
+     * Key: 'myWorkingRecords'
+     * ========================================================
+     */
+    const WorkingNotebook = {
+      records: [],
+      editingId: null,
+      filters: { search: '', date: '' },
+
+      init() {
+        this.records = Storage.get(CONFIG.STORAGE_KEYS.WORKING, []);
+        this.bindEvents();
+        this.render();
+      },
+
+      bindEvents() {
+        const form = document.getElementById('working-form');
+        form.addEventListener('submit', (e) => this.handleFormSubmit(e));
+
+        const searchInput = document.getElementById('work-search-input');
+        searchInput.addEventListener('input', (e) => {
+          this.filters.search = e.target.value.toLowerCase().trim();
+          this.render();
+        });
+
+        const dateFilter = document.getElementById('work-filter-date');
+        dateFilter.addEventListener('change', (e) => {
+          this.filters.date = e.target.value;
+          this.render();
+        });
+
+        document.getElementById('work-date').value = App.getTodayISO();
+      },
+
+      handleFormSubmit(e) {
+        e.preventDefault();
+        const name = document.getElementById('work-name').value.trim();
+        const date = document.getElementById('work-date').value;
+        const task = document.getElementById('work-task').value.trim();
+        const result = document.getElementById('work-result').value;
+        const note = document.getElementById('work-note').value.trim();
+
+        if (!name || !date || !task || !result) {
+          App.showToast('Please fill all required fields.', 'error');
+          return;
+        }
+
+        if (this.editingId) {
+          const idx = this.records.findIndex(r => r.id === this.editingId);
+          if (idx !== -1) {
+            this.records[idx] = {
+              ...this.records[idx],
+              name,
+              date,
+              task,
+              result,
+              note,
+              updatedAt: new Date().toISOString()
+            };
+            App.showToast('Work record updated successfully!', 'success');
+          }
+          this.cancelEdit();
+        } else {
+          const newRecord = {
+            id: 'work_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+            name,
+            date,
+            task,
+            result,
+            note,
+            createdAt: new Date().toISOString()
+          };
+          this.records.unshift(newRecord);
+          App.showToast('Work entry added successfully!', 'success');
+          document.getElementById('working-form').reset();
+          document.getElementById('work-date').value = App.getTodayISO();
+        }
+
+        Storage.set(CONFIG.STORAGE_KEYS.WORKING, this.records);
+        this.render();
+        App.updateDashboardSummary();
+      },
+
+      startEdit(id) {
+        const rec = this.records.find(r => r.id === id);
+        if (!rec) return;
+
+        this.editingId = id;
+        document.getElementById('work-edit-id').value = id;
+        document.getElementById('work-name').value = rec.name;
+        document.getElementById('work-date').value = rec.date;
+        document.getElementById('work-task').value = rec.task;
+        document.getElementById('work-result').value = rec.result;
+        document.getElementById('work-note').value = rec.note || '';
+
+        document.getElementById('work-form-title').textContent = '✏️ Edit Work Entry';
+        document.getElementById('work-editing-badge').style.display = 'inline-flex';
+        document.getElementById('work-submit-btn').innerHTML = '<span>💾 Update Entry</span>';
+        document.getElementById('work-cancel-edit-btn').style.display = 'inline-flex';
+
+        document.getElementById('working-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      },
+
+      cancelEdit() {
+        this.editingId = null;
+        document.getElementById('working-form').reset();
+        document.getElementById('work-edit-id').value = '';
+        document.getElementById('work-date').value = App.getTodayISO();
+
+        document.getElementById('work-form-title').textContent = '➕ Add Work Entry';
+        document.getElementById('work-editing-badge').style.display = 'none';
+        document.getElementById('work-submit-btn').innerHTML = '<span>➕ Add Entry</span>';
+        document.getElementById('work-cancel-edit-btn').style.display = 'none';
+      },
+
+      promptDelete(id) {
+        App.openDeleteModal(() => {
+          this.records = this.records.filter(r => r.id !== id);
+          Storage.set(CONFIG.STORAGE_KEYS.WORKING, this.records);
+          if (this.editingId === id) this.cancelEdit();
+          this.render();
+          App.updateDashboardSummary();
+          App.showToast('Work record deleted.', 'info');
+        });
+      },
+
+      clearFilters() {
+        document.getElementById('work-search-input').value = '';
+        document.getElementById('work-filter-date').value = '';
+        this.filters.search = '';
+        this.filters.date = '';
+        this.render();
+      },
+
+      render() {
+        const tbody = document.getElementById('working-table-tbody');
+        const emptyState = document.getElementById('work-empty-state');
+        const table = tbody.closest('table');
+
+        let filtered = this.records.filter(r => {
+          const matchesSearch = !this.filters.search ||
+            r.name.toLowerCase().includes(this.filters.search) ||
+            r.task.toLowerCase().includes(this.filters.search) ||
+            (r.note && r.note.toLowerCase().includes(this.filters.search));
+          const matchesDate = !this.filters.date || r.date === this.filters.date;
+          return matchesSearch && matchesDate;
+        });
+
+        const total = this.records.length;
+        const rightCount = this.records.filter(r => r.result === 'RIGHT').length;
+        const wrongCount = this.records.filter(r => r.result === 'WRONG').length;
+        const percent = total > 0 ? Math.round((rightCount / total) * 100) : 0;
+
+        document.getElementById('work-stat-total').textContent = total;
+        document.getElementById('work-stat-right').textContent = rightCount;
+        document.getElementById('work-stat-wrong').textContent = wrongCount;
+        document.getElementById('work-stat-percent').textContent = `${percent}%`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          table.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        table.style.display = 'table';
+        emptyState.style.display = 'none';
+
+        tbody.innerHTML = filtered.map((r, i) => {
+          const isRight = r.result === 'RIGHT';
+          const badgeClass = isRight ? 'badge-right' : 'badge-wrong';
+          const badgeText = isRight ? '✅ RIGHT' : '❌ WRONG';
+
+          return `
+            <tr>
+              <td data-label="#"><strong>${i + 1}</strong></td>
+              <td data-label="Name"><strong>${App.escapeHtml(r.name)}</strong></td>
+              <td data-label="Date">${App.formatDisplayDate(r.date)}</td>
+              <td data-label="Work / Task"><strong>${App.escapeHtml(r.task)}</strong></td>
+              <td data-label="Result"><span class="badge ${badgeClass}">${badgeText}</span></td>
+              <td data-label="Note">${App.escapeHtml(r.note || '-')}</td>
+              <td class="td-action">
+                <button class="action-btn-pill" onclick="WorkingNotebook.startEdit('${r.id}')" title="Edit">✏️ Edit</button>
+                <button class="action-btn-pill danger" onclick="WorkingNotebook.promptDelete('${r.id}')" title="Delete">🗑️ Delete</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    };
+
+    /**
+     * ========================================================
+     * MAIN APPLICATION CORE
+     * Router, Live Clock, Auth, Theme, Modals, CSV, Backup & PWA
+     * ========================================================
+     */
+    const App = {
+      pendingDeleteCallback: null,
+      currentView: 'dashboard',
+      deferredPrompt: null,
+      viewModes: {
+        payment: 'table',
+        attendance: 'table',
+        working: 'table'
+      },
+
+      init() {
+        this.initTheme();
+        this.initLiveClock();
+        this.initCanvasBackground();
+        this.bindAuthEvents();
+        this.initPwa();
+        this.seedInitialDataIfEmpty();
+
+        // Check if on mobile on first load
+        if (window.innerWidth <= 768) {
+          this.viewModes.payment = 'card';
+          this.viewModes.attendance = 'card';
+          this.viewModes.working = 'card';
+          this.updateViewModeButtons('payment', 'card');
+          this.updateViewModeButtons('attendance', 'card');
+          this.updateViewModeButtons('working', 'card');
+          document.getElementById('payment-table-container').classList.add('card-view-active');
+          document.getElementById('attendance-table-container').classList.add('card-view-active');
+          document.getElementById('working-table-container').classList.add('card-view-active');
+        }
+
+        // Check session
+        const session = Storage.get(CONFIG.STORAGE_KEYS.SESSION, null);
+        if (session && session.loggedIn) {
+          this.showDashboard();
+        } else {
+          this.showLogin();
+        }
+
+        PaymentNotebook.init();
+        AttendanceNotebook.init();
+        WorkingNotebook.init();
+        this.updateDashboardSummary();
+
+        // Dismiss splash screen smoothly after app initialization
+        setTimeout(() => {
+          const splash = document.getElementById('app-splash-screen');
+          if (splash) {
+            splash.style.opacity = '0';
+            splash.style.visibility = 'hidden';
+            setTimeout(() => splash.remove(), 500);
+          }
+        }, 600);
+      },
+
+      // ==========================================
+      // PWA & SERVICE WORKER INSTALLATION
+      // ==========================================
+      initPwa() {
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+              .then((reg) => console.log('[PWA] Service Worker registered with scope:', reg.scope))
+              .catch((err) => console.log('[PWA] Service Worker registration failed:', err));
+          });
+        }
+
+        // Capture native browser install prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          this.deferredPrompt = e;
+          console.log('[PWA] beforeinstallprompt event captured');
+
+          // Show all Install App buttons
+          document.querySelectorAll('.pwa-install-trigger').forEach(btn => {
+            btn.style.display = 'inline-flex';
+          });
+          const heroBanner = document.getElementById('pwa-hero-install-banner');
+          if (heroBanner) heroBanner.style.display = 'flex';
+        });
+
+        // Track when app is successfully installed
+        window.addEventListener('appinstalled', () => {
+          this.deferredPrompt = null;
+          console.log('[PWA] App installed successfully');
+          document.querySelectorAll('.pwa-install-trigger').forEach(btn => {
+            btn.style.display = 'none';
+          });
+          const heroBanner = document.getElementById('pwa-hero-install-banner');
+          if (heroBanner) heroBanner.style.display = 'none';
+          this.showToast('Student Management App successfully installed on your device!', 'success');
+        });
+
+        // Check if running in standalone mode (already installed)
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+          console.log('[PWA] Running in standalone PWA mode');
+          const heroBanner = document.getElementById('pwa-hero-install-banner');
+          if (heroBanner) heroBanner.style.display = 'none';
+        }
+      },
+
+      triggerPwaInstall() {
+        if (this.deferredPrompt) {
+          // Trigger native installation prompt
+          this.deferredPrompt.prompt();
+          this.deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('[PWA] User accepted installation prompt');
+            } else {
+              console.log('[PWA] User dismissed installation prompt');
+            }
+            this.deferredPrompt = null;
+          });
+        } else {
+          // Browser does not support native prompt (e.g. iOS Safari, or already installed)
+          this.openModal('modal-install-instructions');
+        }
+      },
+
+      // ==========================================
+      // VIEW MODE TOGGLE (Cards vs Table)
+      // ==========================================
+      setViewMode(section, mode) {
+        this.viewModes[section] = mode;
+        const container = document.getElementById(`${section}-table-container`);
+        if (mode === 'card') {
+          container.classList.add('card-view-active');
+        } else {
+          container.classList.remove('card-view-active');
+        }
+        this.updateViewModeButtons(section, mode);
+      },
+
+      updateViewModeButtons(section, mode) {
+        const cardBtn = document.getElementById(`${section.substring(0, 3)}-btn-view-card`) || document.getElementById(`${section}-btn-view-card`);
+        const tableBtn = document.getElementById(`${section.substring(0, 3)}-btn-view-table`) || document.getElementById(`${section}-btn-view-table`);
+
+        if (cardBtn && tableBtn) {
+          if (mode === 'card') {
+            cardBtn.classList.add('active');
+            tableBtn.classList.remove('active');
+          } else {
+            tableBtn.classList.add('active');
+            cardBtn.classList.remove('active');
+          }
+        }
+      },
+
+      // ==========================================
+      // AUTHENTICATION
+      // ==========================================
+      bindAuthEvents() {
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const uInput = document.getElementById('login-username').value.trim();
+          const pInput = document.getElementById('login-password').value;
+          const creds = Storage.getCredentials();
+
+          if (uInput === creds.username && pInput === creds.password) {
+            document.getElementById('login-error-alert').style.display = 'none';
+            Storage.set(CONFIG.STORAGE_KEYS.SESSION, { loggedIn: true, user: uInput });
+            this.showDashboard();
+            this.showToast('Welcome back! Logged in successfully.', 'success');
+          } else {
+            const errAlert = document.getElementById('login-error-alert');
+            errAlert.style.display = 'flex';
+            errAlert.style.animation = 'none';
+            void errAlert.offsetWidth;
+            errAlert.style.animation = 'shake 0.35s ease-in-out';
+          }
+        });
+
+        const togglePwdBtn = document.getElementById('btn-toggle-login-pwd');
+        const pwdInput = document.getElementById('login-password');
+        togglePwdBtn.addEventListener('click', () => {
+          const isPwd = pwdInput.type === 'password';
+          pwdInput.type = isPwd ? 'text' : 'password';
+          togglePwdBtn.textContent = isPwd ? '🙈' : '👁️';
+        });
+
+        const credsForm = document.getElementById('change-creds-form');
+        credsForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const newU = document.getElementById('new-username-input').value.trim();
+          const newP = document.getElementById('new-password-input').value;
+          if (!newU || !newP) {
+            this.showToast('Please enter both username and password.', 'error');
+            return;
+          }
+          Storage.setCredentials(newU, newP);
+          this.showToast('Credentials updated successfully!', 'success');
+          this.closeModal('modal-backup');
+        });
+
+        const currentCreds = Storage.getCredentials();
+        document.getElementById('new-username-input').value = currentCreds.username;
+        document.getElementById('new-password-input').value = currentCreds.password;
+
+        document.getElementById('btn-delete-confirmed').addEventListener('click', () => {
+          if (typeof this.pendingDeleteCallback === 'function') {
+            this.pendingDeleteCallback();
+          }
+          this.closeModal('modal-delete-confirm');
+        });
+      },
+
+      showLogin() {
+        document.getElementById('view-login').style.display = 'flex';
+        document.getElementById('app-shell').style.display = 'none';
+        document.getElementById('login-password').value = '';
+      },
+
+      showDashboard() {
+        document.getElementById('view-login').style.display = 'none';
+        document.getElementById('app-shell').style.display = 'flex';
+        this.showView('dashboard');
+        this.updateDashboardSummary();
+      },
+
+      logout() {
+        Storage.remove(CONFIG.STORAGE_KEYS.SESSION);
+        this.showLogin();
+        this.showToast('Logged out.', 'info');
+      },
+
+      // ==========================================
+      // VIEW NAVIGATION & MOBILE BOTTOM TABS
+      // ==========================================
+      showView(viewName) {
+        this.currentView = viewName;
+        const sections = ['view-dashboard', 'view-payment', 'view-attendance', 'view-working'];
+        sections.forEach(secId => {
+          document.getElementById(secId).style.display = 'none';
+        });
+
+        const target = document.getElementById(`view-${viewName}`);
+        if (target) {
+          target.style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Update Mobile Bottom Nav active state
+        document.querySelectorAll('.mobile-bottom-nav .nav-tab-btn').forEach(btn => btn.classList.remove('active'));
+        const tabMap = { dashboard: 'mob-nav-dash', payment: 'mob-nav-pay', attendance: 'mob-nav-att', working: 'mob-nav-work' };
+        const activeTabId = tabMap[viewName];
+        if (activeTabId) {
+          const tabEl = document.getElementById(activeTabId);
+          if (tabEl) tabEl.classList.add('active');
+        }
+
+        if (viewName === 'payment') PaymentNotebook.render();
+        if (viewName === 'attendance') AttendanceNotebook.render();
+        if (viewName === 'working') WorkingNotebook.render();
+        if (viewName === 'dashboard') this.updateDashboardSummary();
+      },
+
+      // ==========================================
+      // LIVE DASHBOARD SUMMARY (8 CARDS)
+      // ==========================================
+      updateDashboardSummary() {
+        const payments = PaymentNotebook.records;
+        const attendance = AttendanceNotebook.records;
+        const working = WorkingNotebook.records;
+
+        const payTotalAmt = payments.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+        document.getElementById('dash-stat-pay-count').textContent = payments.length;
+        document.getElementById('dash-stat-pay-amount').textContent = `₹${payTotalAmt.toLocaleString('en-IN')}`;
+
+        const attPresent = attendance.filter(r => r.status === 'Present').length;
+        const attAbsent = attendance.filter(r => r.status === 'Absent').length;
+        document.getElementById('dash-stat-att-count').textContent = attendance.length;
+        document.getElementById('dash-stat-att-present').textContent = attPresent;
+        document.getElementById('dash-stat-att-absent').textContent = attAbsent;
+
+        const workRight = working.filter(r => r.result === 'RIGHT').length;
+        const workWrong = working.filter(r => r.result === 'WRONG').length;
+        document.getElementById('dash-stat-work-count').textContent = working.length;
+        document.getElementById('dash-stat-work-right').textContent = workRight;
+        document.getElementById('dash-stat-work-wrong').textContent = workWrong;
+      },
+
+      // ==========================================
+      // THEME (Dark / Light)
+      // ==========================================
+      initTheme() {
+        const savedTheme = localStorage.getItem(CONFIG.STORAGE_KEYS.THEME) || 'dark';
+        this.setTheme(savedTheme);
+
+        document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+          const current = document.documentElement.getAttribute('data-theme') || 'dark';
+          const next = current === 'dark' ? 'light' : 'dark';
+          this.setTheme(next);
+        });
+      },
+
+      setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(CONFIG.STORAGE_KEYS.THEME, theme);
+        const icon = document.getElementById('theme-icon-indicator');
+        if (icon) icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+
+        // Update PWA theme-color meta tag to match theme
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', theme === 'dark' ? '#0a0e17' : '#f1f5f9');
+        }
+      },
+
+      // ==========================================
+      // LIVE CLOCK & DATE
+      // ==========================================
+      initLiveClock() {
+        const update = () => {
+          const now = new Date();
+          const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+          const timeStr = now.toLocaleTimeString('en-US', { hour12: true });
+
+          const dEl = document.getElementById('header-date');
+          const tEl = document.getElementById('header-time');
+          if (dEl) dEl.textContent = dateStr;
+          if (tEl) tEl.textContent = timeStr;
+        };
+        update();
+        setInterval(update, 1000);
+      },
+
+      // ==========================================
+      // BACKGROUND AMBIENT PARTICLES (Canvas)
+      // ==========================================
+      initCanvasBackground() {
+        const canvas = document.getElementById('ambient-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        });
+
+        const dots = [];
+        const count = Math.min(Math.floor((width * height) / 22000), 38);
+
+        for (let i = 0; i < count; i++) {
+          dots.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.35,
+            vy: (Math.random() - 0.5) * 0.35,
+            radius: Math.random() * 2 + 1
+          });
+        }
+
+        const render = () => {
+          ctx.clearRect(0, 0, width, height);
+          const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+          ctx.fillStyle = isDark ? 'rgba(147, 197, 253, 0.25)' : 'rgba(59, 130, 246, 0.15)';
+          ctx.strokeStyle = isDark ? 'rgba(147, 197, 253, 0.08)' : 'rgba(59, 130, 246, 0.05)';
+
+          for (let i = 0; i < dots.length; i++) {
+            const d = dots[i];
+            d.x += d.vx;
+            d.y += d.vy;
+            if (d.x < 0) d.x = width;
+            if (d.x > width) d.x = 0;
+            if (d.y < 0) d.y = height;
+            if (d.y > height) d.y = 0;
+
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            for (let j = i + 1; j < dots.length; j++) {
+              const d2 = dots[j];
+              const dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+              if (dist < 100) {
+                ctx.lineWidth = 0.6;
+                ctx.beginPath();
+                ctx.moveTo(d.x, d.y);
+                ctx.lineTo(d2.x, d2.y);
+                ctx.stroke();
+              }
+            }
+          }
+          requestAnimationFrame(render);
+        };
+        render();
+      },
+
+      // ==========================================
+      // MODAL HELPERS & DELETE CONFIRMATION
+      // ==========================================
+      openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'flex';
+      },
+
+      closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.style.display = 'none';
+      },
+
+      openDeleteModal(onConfirmCallback) {
+        this.pendingDeleteCallback = onConfirmCallback;
+        this.openModal('modal-delete-confirm');
+      },
+
+      // ==========================================
+      // BACKUP & RESTORE
+      // ==========================================
+      downloadBackup() {
+        const backupData = {
+          version: "1.0",
+          exportDate: new Date().toISOString(),
+          studentPayments: PaymentNotebook.records,
+          studentAttendance: AttendanceNotebook.records,
+          myWorkingRecords: WorkingNotebook.records,
+          credentials: Storage.getCredentials()
+        };
+
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `student_management_backup_${this.getTodayISO()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        this.showToast('Backup downloaded successfully!', 'success');
+      },
+
+      restoreBackup(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data.studentPayments && Array.isArray(data.studentPayments)) {
+              PaymentNotebook.records = data.studentPayments;
+              Storage.set(CONFIG.STORAGE_KEYS.PAYMENTS, data.studentPayments);
+            }
+            if (data.studentAttendance && Array.isArray(data.studentAttendance)) {
+              AttendanceNotebook.records = data.studentAttendance;
+              Storage.set(CONFIG.STORAGE_KEYS.ATTENDANCE, data.studentAttendance);
+            }
+            if (data.myWorkingRecords && Array.isArray(data.myWorkingRecords)) {
+              WorkingNotebook.records = data.myWorkingRecords;
+              Storage.set(CONFIG.STORAGE_KEYS.WORKING, data.myWorkingRecords);
+            }
+            if (data.credentials && data.credentials.username && data.credentials.password) {
+              Storage.setCredentials(data.credentials.username, data.credentials.password);
+            }
+
+            PaymentNotebook.render();
+            AttendanceNotebook.render();
+            WorkingNotebook.render();
+            this.updateDashboardSummary();
+
+            this.closeModal('modal-backup');
+            this.showToast('Backup restored successfully!', 'success');
+          } catch (err) {
+            this.showToast('Invalid backup file. Please select a valid JSON backup.', 'error');
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+      },
+
+      // ==========================================
+      // CSV EXPORT (Payments, Attendance, Working)
+      // ==========================================
+      exportCSV(section) {
+        let rows = [];
+        let filename = `${section}_${this.getTodayISO()}.csv`;
+
+        if (section === 'payments') {
+          rows.push(['ID', 'Student Name', 'Payment Amount', 'Date', 'Status', 'Note']);
+          PaymentNotebook.records.forEach((r, i) => {
+            rows.push([i + 1, r.studentName, r.amount, r.date, r.status, r.note || '']);
+          });
+        } else if (section === 'attendance') {
+          rows.push(['ID', 'Student Name', 'Date', 'Attendance', 'Note']);
+          AttendanceNotebook.records.forEach((r, i) => {
+            rows.push([i + 1, r.studentName, r.date, r.status, r.note || '']);
+          });
+        } else if (section === 'working') {
+          rows.push(['ID', 'Name', 'Date', 'Work / Task', 'Result', 'Note']);
+          WorkingNotebook.records.forEach((r, i) => {
+            rows.push([i + 1, r.name, r.date, r.task, r.result, r.note || '']);
+          });
+        }
+
+        const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        this.showToast(`Exported ${section} to CSV.`, 'info');
+      },
+
+      // ==========================================
+      // CLEAR ALL DATA (Section 12)
+      // ==========================================
+      clearAllData() {
+        const confirmed = confirm("WARNING: This will permanently remove all saved records from this browser. Are you sure?");
+        if (!confirmed) return;
+
+        Storage.remove(CONFIG.STORAGE_KEYS.PAYMENTS);
+        Storage.remove(CONFIG.STORAGE_KEYS.ATTENDANCE);
+        Storage.remove(CONFIG.STORAGE_KEYS.WORKING);
+
+        PaymentNotebook.records = [];
+        AttendanceNotebook.records = [];
+        WorkingNotebook.records = [];
+
+        PaymentNotebook.render();
+        AttendanceNotebook.render();
+        WorkingNotebook.render();
+        this.updateDashboardSummary();
+
+        this.closeModal('modal-backup');
+        this.showToast('All saved data has been wiped.', 'info');
+      },
+
+      // ==========================================
+      // INITIAL SAMPLE SEED (On First Open Only)
+      // ==========================================
+      seedInitialDataIfEmpty() {
+        const pay = Storage.get(CONFIG.STORAGE_KEYS.PAYMENTS, null);
+        const att = Storage.get(CONFIG.STORAGE_KEYS.ATTENDANCE, null);
+        const work = Storage.get(CONFIG.STORAGE_KEYS.WORKING, null);
+
+        const today = this.getTodayISO();
+
+        if (pay === null) {
+          const samplePayments = [
+            { id: 'pay_1', studentName: 'Rahul', amount: 500, date: today, status: 'Paid', note: 'September fee', createdAt: new Date().toISOString() },
+            { id: 'pay_2', studentName: 'Amit', amount: 600, date: today, status: 'Unpaid', note: 'Pending reminder', createdAt: new Date().toISOString() },
+            { id: 'pay_3', studentName: 'Pooja', amount: 450, date: today, status: 'Partial', note: 'Half advance', createdAt: new Date().toISOString() }
+          ];
+          Storage.set(CONFIG.STORAGE_KEYS.PAYMENTS, samplePayments);
+        }
+
+        if (att === null) {
+          const sampleAttendance = [
+            { id: 'att_1', studentName: 'Rahul', date: today, status: 'Present', note: 'On time', createdAt: new Date().toISOString() },
+            { id: 'att_2', studentName: 'Amit', date: today, status: 'Absent', note: 'Medical leave', createdAt: new Date().toISOString() },
+            { id: 'att_3', studentName: 'Pooja', date: today, status: 'Present', note: '', createdAt: new Date().toISOString() }
+          ];
+          Storage.set(CONFIG.STORAGE_KEYS.ATTENDANCE, sampleAttendance);
+        }
+
+        if (work === null) {
+          const sampleWorking = [
+            { id: 'work_1', name: 'Rahul', date: today, task: 'Mathematics', result: 'RIGHT', note: 'Good work', createdAt: new Date().toISOString() },
+            { id: 'work_2', name: 'Amit', date: today, task: 'English', result: 'WRONG', note: 'Need improvement', createdAt: new Date().toISOString() },
+            { id: 'work_3', name: 'Pooja', date: today, task: 'Science Lab', result: 'RIGHT', note: 'Excellent experiment', createdAt: new Date().toISOString() }
+          ];
+          Storage.set(CONFIG.STORAGE_KEYS.WORKING, sampleWorking);
+        }
+      },
+
+      // ==========================================
+      // TOAST NOTIFICATIONS
+      // ==========================================
+      showToast(message, type = 'info') {
+        const tray = document.getElementById('toast-tray');
+        if (!tray) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast-msg toast-${type}`;
+        
+        let icon = 'ℹ️';
+        if (type === 'success') icon = '✅';
+        if (type === 'error') icon = '⚠️';
+
+        toast.innerHTML = `<span>${icon}</span><span>${this.escapeHtml(message)}</span>`;
+        tray.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          toast.style.transition = 'all 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      },
+
+      // ==========================================
+      // UTILITIES
+      // ==========================================
+      getTodayISO() {
+        return new Date().toISOString().split('T')[0];
+      },
+
+      formatDisplayDate(isoDate) {
+        if (!isoDate) return '-';
+        const parts = isoDate.split('-');
+        if (parts.length === 3) {
+          return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        return isoDate;
+      },
+
+      escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      },
+
+      escapeJs(str) {
+        if (!str) return '';
+        return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+      }
+    };
+
+    // Close modals on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+      }
+    });
+
+    // Close modals on backdrop click
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) m.style.display = 'none';
+      });
+    });
+
+    // Start App on DOM ready
+    document.addEventListener('DOMContentLoaded', () => {
+      App.init();
+    });
+  </script>
+</body>
+</html>
